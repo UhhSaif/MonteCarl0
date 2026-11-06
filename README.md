@@ -10,7 +10,9 @@ The roulette-inspired interface is decorative; the statistical engine uses histo
 
 **Project evidence:** [synthetic validation and benchmarks](docs/validation-report.md) · [real-market held-out evaluation](docs/validation-market-report.md) · [deployment guide](docs/deployment.md)
 
-**Public demo:** deployment configuration is ready; a verified public URL is not yet available. Run locally using the instructions below.
+**[Open the live demo](https://montecarl0.onrender.com/)** · [API documentation](https://montecarl0.onrender.com/docs)
+
+Hosted on Render’s Free plan. The first visit after inactivity may take 50 seconds or more while the service wakes up.
 
 ## Architecture
 
@@ -147,7 +149,7 @@ Manual browser checklist: initial AAPL load; search a company; select a result w
 
 Run `python -m backend.validate_model` to reproduce the offline synthetic report. Use `--ticker AAPL --output docs/validation-market-report.md` for current five-year market history. Market reports depend on retrieval date and adjusted-data revisions; synthetic tests require no network. See the reports for methodology and limitations.
 
-See [deployment instructions](docs/deployment.md) for the free Render configuration. Public availability and successful GitHub Actions runs must be verified after pushing and connecting hosting.
+See [deployment instructions](docs/deployment.md) for the free Render configuration. The public deployment was verified with real Yahoo history and a successful simulation. GitHub Actions also passed the test suite, frontend build, and Docker build.
 
 ## Attribution
 

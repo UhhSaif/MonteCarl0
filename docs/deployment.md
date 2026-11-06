@@ -1,5 +1,7 @@
 # Deploy the public demo
 
+Live: https://montecarl0.onrender.com/ (Render Free). Initial deployment verified on 2026-11-06: health, AAPL history, and simulation API returned HTTP 200.
+
 This repository includes a Docker image and Render Blueprint for one **free** web service. FastAPI serves the compiled React files and `/api` from the same origin. No database or API key is required.
 
 ## Render
