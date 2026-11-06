@@ -143,11 +143,11 @@ export default function MonteCarloPanel({ ticker, history }) {
   const complete = progress === 1;
 
   return (
-    <section className="mc-panel" aria-labelledby="mc-title">
+    <section id="simulation" className="mc-panel" aria-labelledby="mc-title">
       <div className="mc-heading">
         <div>
           <p className="eyebrow">
-            <span /> EXPLORE WHAT COULD HAPPEN
+            <span /> 02 / THE POSSIBILITY LAB
           </p>
           <h2 id="mc-title">One stock. Thousands of possible futures.</h2>
           <p>

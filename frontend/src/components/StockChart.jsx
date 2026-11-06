@@ -8,15 +8,15 @@ export default function StockChart({ prices, currency }) {
     const chart = createChart(container.current, {
       autoSize: true,
       layout: {
-        background: { type: ColorType.Solid, color: "#10161b" },
-        textColor: "#87959f",
+        background: { type: ColorType.Solid, color: "#102720" },
+        textColor: "#a4b5a8",
         fontFamily: "'SFMono-Regular', Consolas, monospace",
         fontSize: 11,
         attributionLogo: true,
       },
       grid: {
         vertLines: { visible: false },
-        horzLines: { color: "#20292f", style: 2 },
+        horzLines: { color: "#294137", style: 2 },
       },
       rightPriceScale: {
         borderVisible: false,

@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import {
   ArrowUpRight,
-  ChartNoAxesCombined,
   CircleAlert,
   Database,
   Info,
@@ -9,6 +8,7 @@ import {
   RotateCcw,
 } from "lucide-react";
 import Header from "./components/Header";
+import RouletteWheel from "./components/RouletteWheel";
 import StockSearch from "./components/StockSearch";
 import StockHeader, { number } from "./components/StockHeader";
 import StockChart from "./components/StockChart";
@@ -60,20 +60,20 @@ export default function App() {
     <>
       <Header />
       <main>
-        <div className="page-heading">
-          <div>
-            <p className="eyebrow">
-              <span /> THE RESEARCH WORKSPACE
-            </p>
-            <h1>A clearer view of the market.</h1>
-            <p className="intro">
-              Explore historical prices. Build your understanding.
-            </p>
+        <section className="editorial-hero" aria-labelledby="hero-title">
+          <div className="hero-copy">
+            <p className="eyebrow">A STUDY IN PROBABILITY · NO. 001</p>
+            <h1 id="hero-title">Chance,<br /><em>understood.</em></h1>
+            <p className="hero-description">The market has a thousand possible futures.<br />Get a clearer picture of what could come next.</p>
+            <a className="hero-cta" href="#simulation">Explore the possibilities <ArrowUpRight size={18} /></a>
           </div>
-          <span className="workspace-label">
-            <ChartNoAxesCombined size={16} /> Market explorer
-          </span>
-        </div>
+          <div className="hero-art">
+            <RouletteWheel />
+            <p>INSPIRED BY CHANCE. INFORMED BY DATA.</p>
+          </div>
+          <div className="hero-bottom"><span>MONTE CARLO METHODS / MARKET RESEARCH</span><span>SCROLL TO EXPLORE ↓</span></div>
+        </section>
+        <div className="section-label" id="market"><span><b>01</b> THE MARKET OBSERVATORY</span><span>LOOK BACK. THEN LOOK AHEAD.</span></div>
         <section className="search-section" aria-label="Stock search">
           <StockSearch onSelect={selectStock} />
           <p>
