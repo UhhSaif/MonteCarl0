@@ -1,8 +1,8 @@
 # MonteCarl0
 
-Quantitative Market Research & Simulation. **Phase 1: historical market explorer.**
+Quantitative Market Research & Simulation. **Historical market explorer + Monte Carlo research API.**
 
-A local React + FastAPI application for searching stocks and ETFs and exploring daily historical prices. No forecasting models, accounts, databases, or trading functionality are included.
+A local React + FastAPI application for searching stocks and ETFs and exploring daily historical prices. The dashboard also includes an animated geometric Brownian motion simulation with a forecast fan and sideways ending-price histogram. No accounts, databases, or trading functionality are included.
 
 ## Run locally
 
@@ -29,6 +29,25 @@ Open **http://127.0.0.1:5173**. API documentation is at **http://127.0.0.1:8000/
 
 For the versions used during development, `backend/requirements-lock.txt` records a full Python dependency snapshot; install it instead of `requirements.txt` for that exact set. The npm lockfile pins frontend dependencies.
 
+## Run a Monte Carlo simulation
+
+Below the historical chart, choose the trial count, trading-day horizon, and
+historical estimation window, then click **Run Monte Carlo**. A fixed seed replays
+the same random draws for the same historical input; leave it blank for a new seed.
+
+- Green shows prices above the starting close; red shows prices below it.
+- Stronger shading marks the middle 50% inside the lighter 90% percentile band.
+- The gold median and dashed 25th/75th percentile lines summarize the distribution.
+- The sideways histogram shares the forecast's price axis; wider bars mean more endings.
+- Pause, resume, show all, or replay the visualization without another API call.
+- Change the target input/slider, or inspect and click the histogram, to explore probabilities without rerunning.
+
+The progress bar represents **visualization progress**, not backend computation.
+Live probabilities use the revealed endings; percentile bands use the completed
+model. Reduced-motion preferences skip the reveal. On phones, swipe the chart
+horizontally to see its right-hand distribution. Results are model-based estimates,
+not predictions or investment recommendations.
+
 ## How the pieces connect
 
 1. `frontend/src/components/StockSearch.jsx` debounces company/ticker searches by 300 ms. Arrow keys navigate, Enter selects/searches, and Escape dismisses suggestions.
@@ -48,8 +67,11 @@ The history response includes lightweight metadata from the same provider reques
 | `GET /api/search?q=Apple` | Provider-backed equity/ETF search; empty query/no matches returns `[]` |
 | `GET /api/stocks/AAPL` | Symbol, name, exchange, currency when available |
 | `GET /api/stocks/AAPL/history?period=1y` | Chronological OHLCV, metadata, latest close and session change |
+| `POST /api/simulations/monte-carlo` | Historically calibrated GBM trials, ending distribution, percentiles, and empirical probabilities |
 
-Periods: `1mo`, `3mo`, `6mo`, `1y`, `5y`, `max`. Invalid input returns 400/422, missing history 404, provider failures 502, and rate limiting 503. Missing optional values are JSON `null`, never NaN. Invalid OHLC bars are omitted, dates are sorted and deduplicated.
+Historical API periods: `1mo`, `3mo`, `6mo`, `1y`, `3y`, `5y`, `max`. Invalid input returns 400/422, missing history 404, provider failures 502, and rate limiting 503. Missing optional values are JSON `null`, never NaN. Invalid OHLC bars are omitted, dates are sorted and deduplicated.
+
+See [the Monte Carlo engine/API guide](docs/monte-carlo.md) for request examples, the daily GBM equation, response fields, reproducibility, limits, and testing. To run the live NVDA example and save its input/output: `.venv/bin/python -m backend.demo_monte_carlo`.
 
 ## Price semantics and limitations
 
@@ -80,15 +102,16 @@ From the repository root:
 .venv/bin/python -m pytest backend/tests -q
 cd frontend
 npm run build
+npm test
 ```
 
-Backend tests mock Yahoo to cover all six periods, validation, no data, provider outages, rate limiting, search filtering, metadata reuse, cache behavior, NaN/Infinity cleaning, date ordering, duplicate sessions, close-time filtering, and session-change calculations. They run without network access.
+Backend tests mock Yahoo to cover all supported historical periods, validation, no data, provider outages, rate limiting, search filtering, metadata reuse, cache behavior, NaN/Infinity cleaning, date ordering, duplicate sessions, close-time filtering, and session-change calculations. They run without network access.
 
 Manual browser checklist: initial AAPL load; search a company; select a result with arrow keys + Enter; Escape dismissal; direct ticker entry; all timeframe buttons; crosshair/zoom/scroll; invalid ticker; retry; narrow viewport; rapidly switch stocks/timeframes.
 
 ## Next milestone
 
-Review Phase 1 together, walk through a search request from React to Python, and improve any remaining UX or data-provider edge cases. Statistical analysis and simulation remain out of scope until explicitly approved.
+Review the simulation assumptions and visualization together before extending the models. Markov chains, machine learning, and AI forecasting remain out of scope.
 
 ## Attribution
 

@@ -44,7 +44,7 @@ def test_history_and_change(provider):
     assert provider.history.call_args.kwargs['auto_adjust'] is True
 
 
-@pytest.mark.parametrize('period', ['1mo', '3mo', '6mo', '1y', '5y', 'max'])
+@pytest.mark.parametrize('period', ['1mo', '3mo', '6mo', '1y', '3y', '5y', 'max'])
 def test_supported_periods(period, provider):
     assert client.get(f'/api/stocks/AAPL/history?period={period}').status_code == 200
 

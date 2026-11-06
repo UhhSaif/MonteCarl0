@@ -1,9 +1,9 @@
 const BASE = (import.meta.env.VITE_API_BASE_URL || "").replace(/\/$/, "");
 
-export async function request(path, signal) {
+export async function request(path, signal, options = {}) {
   let response;
   try {
-    response = await fetch(`${BASE}/api${path}`, { signal });
+    response = await fetch(`${BASE}/api${path}`, { ...options, signal });
   } catch (error) {
     if (error.name === "AbortError") throw error;
     throw new Error(
@@ -28,3 +28,10 @@ export const getHistory = (ticker, period, signal) =>
     `/stocks/${encodeURIComponent(ticker)}/history?period=${period}`,
     signal,
   );
+
+export const runSimulation = (parameters, signal) =>
+  request("/simulations/monte-carlo", signal, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(parameters),
+  });

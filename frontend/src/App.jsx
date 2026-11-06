@@ -14,6 +14,7 @@ import StockHeader, { number } from "./components/StockHeader";
 import StockChart from "./components/StockChart";
 import TimeframeSelector from "./components/TimeframeSelector";
 import { getHistory } from "./services/stockApi";
+import MonteCarloPanel from "./components/MonteCarloPanel";
 
 export default function App() {
   const [stock, setStock] = useState({ symbol: "AAPL" });
@@ -172,6 +173,11 @@ export default function App() {
             </strong>
           </div>
         </section>
+        <MonteCarloPanel
+          key={stock.symbol}
+          ticker={stock.symbol}
+          history={data}
+        />
         <aside className="research-note">
           <span className="note-icon">
             <Info size={18} />

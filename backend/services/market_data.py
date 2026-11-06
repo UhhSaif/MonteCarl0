@@ -11,7 +11,7 @@ import pandas as pd
 import yfinance as yf
 from yfinance.exceptions import YFPricesMissingError, YFRateLimitError, YFTzMissingError
 
-PERIODS = {"1mo", "3mo", "6mo", "1y", "5y", "max"}
+PERIODS = {"1mo", "3mo", "6mo", "1y", "3y", "5y", "max"}
 
 
 class MarketDataError(Exception):
@@ -118,7 +118,7 @@ def clean_prices(frame, metadata, now=None):
 def get_history(ticker, period="1y"):
     ticker = normalize_ticker(ticker)
     if period not in PERIODS:
-        raise MarketDataError("Unsupported period. Use 1mo, 3mo, 6mo, 1y, 5y, or max.", 400)
+        raise MarketDataError("Unsupported period. Use 1mo, 3mo, 6mo, 1y, 3y, 5y, or max.", 400)
 
     def fetch():
         stock = yf.Ticker(ticker)

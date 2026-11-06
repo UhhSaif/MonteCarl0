@@ -5,12 +5,14 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from backend.services.market_data import MarketDataError, get_history, get_stock, search_stocks
+from backend.schemas import MonteCarloRequest
+from backend.services.monte_carlo import SimulationError, run_monte_carlo
 
 app = FastAPI(title="MonteCarl0 API", version="0.1.0")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[s.strip() for s in os.getenv("CORS_ORIGINS", "http://localhost:5173,http://127.0.0.1:5173").split(",") if s.strip()],
-    allow_methods=["GET"], allow_headers=["*"],
+    allow_methods=["GET", "POST"], allow_headers=["*"],
 )
 
 
@@ -21,7 +23,22 @@ def market_error(request: Request, exc: MarketDataError):
 
 @app.exception_handler(RequestValidationError)
 def validation_error(request: Request, exc: RequestValidationError):
-    return JSONResponse(status_code=422, content={"detail": "Invalid request parameters."})
+    return JSONResponse(status_code=422, content={
+        "detail": "Invalid request parameters.",
+        "errors": [{"field": ".".join(map(str, error["loc"])), "message": error["msg"]}
+                   for error in exc.errors()],
+    })
+
+
+@app.exception_handler(SimulationError)
+def simulation_error(request: Request, exc: SimulationError):
+    return JSONResponse(status_code=422, content={"detail": str(exc)})
+
+
+@app.post("/api/simulations/monte-carlo")
+def monte_carlo(parameters: MonteCarloRequest):
+    # A synchronous route runs in FastAPI's worker thread pool, not its event loop.
+    return run_monte_carlo(parameters)
 
 
 @app.get("/api/health")
