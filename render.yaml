@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: montecarl0
+    runtime: docker
+    plan: free
+    healthCheckPath: /api/health
+    envVars:
+      - key: PUBLIC_DEMO
+        value: '1'

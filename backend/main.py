@@ -59,3 +59,13 @@ def history(ticker: str, period: str = "1y"):
 @app.get("/api/stocks/{ticker}")
 def stock(ticker: str):
     return get_stock(ticker)
+
+
+# Single-origin deployment: API routes take precedence over built frontend files.
+if os.getenv("PUBLIC_DEMO") == "1":
+    from backend.demo_limits import limit_demo_requests
+    app.middleware("http")(limit_demo_requests)
+
+if os.getenv("STATIC_DIR"):
+    from fastapi.staticfiles import StaticFiles
+    app.mount("/", StaticFiles(directory=os.environ["STATIC_DIR"], html=True), name="frontend")

@@ -1,8 +1,42 @@
 # MonteCarl0
 
-Quantitative Market Research & Simulation. **Historical market explorer + Monte Carlo research API.**
+[![CI](https://github.com/UhhSaif/MonteCarl0/actions/workflows/ci.yml/badge.svg)](https://github.com/UhhSaif/MonteCarl0/actions/workflows/ci.yml)
 
-A local React + FastAPI application for searching stocks and ETFs and exploring daily historical prices. The dashboard also includes an animated geometric Brownian motion simulation with a forecast fan and sideways ending-price histogram. No accounts, databases, or trading functionality are included.
+**An interactive market-research workspace that makes uncertainty visible.** Search stocks, explore adjusted price history, and simulate up to 10,000 possible futures with a custom forecast fan and sideways ending-price histogram.
+
+React 19 · FastAPI · NumPy · TradingView Lightweight Charts · custom SVG · Docker
+
+The roulette-inspired interface is decorative; the statistical engine uses historically calibrated geometric Brownian motion. No accounts, trading, or AI forecasting are included.
+
+**Project evidence:** [synthetic validation and benchmarks](docs/validation-report.md) · [real-market held-out evaluation](docs/validation-market-report.md) · [deployment guide](docs/deployment.md)
+
+**Public demo:** deployment configuration is ready; a verified public URL is not yet available. Run locally using the instructions below.
+
+## Architecture
+
+```mermaid
+flowchart LR
+  UI[React dashboard] --> Client[HTTP API client]
+  Client --> API[FastAPI /api]
+  API --> Data[yfinance + five-minute cache]
+  Data --> Yahoo[Yahoo Finance]
+  API --> Engine[NumPy GBM engine]
+  Data --> Engine
+  Engine --> Result[Percentiles + all endings + 200 sample paths]
+  Result --> UI
+  UI --> Charts[Historical canvas + forecast SVG]
+```
+
+In development, Vite proxies API calls to Python. In the deployment image, FastAPI serves the compiled frontend and API from the same origin.
+
+## Engineering decisions
+
+- All trials contribute to statistics; only 200 individual paths are transferred for display.
+- Model computation and animation are separate. Replay and target exploration reuse completed results.
+- Abortable browser requests prevent stale selections from overwriting new data.
+- Input bounds, finite-value checks, provider error handling, and caching keep failures explicit.
+- CI runs offline tests, builds the frontend and Docker image, and uploads a fresh synthetic validation report.
+- Rolling validation fits only on data available through each forecast origin, with a test that perturbs future prices to check isolation.
 
 ## Run locally
 
@@ -109,9 +143,11 @@ Backend tests mock Yahoo to cover all supported historical periods, validation, 
 
 Manual browser checklist: initial AAPL load; search a company; select a result with arrow keys + Enter; Escape dismissal; direct ticker entry; all timeframe buttons; crosshair/zoom/scroll; invalid ticker; retry; narrow viewport; rapidly switch stocks/timeframes.
 
-## Next milestone
+## Validation and deployment
 
-Review the simulation assumptions and visualization together before extending the models. Markov chains, machine learning, and AI forecasting remain out of scope.
+Run `python -m backend.validate_model` to reproduce the offline synthetic report. Use `--ticker AAPL --output docs/validation-market-report.md` for current five-year market history. Market reports depend on retrieval date and adjusted-data revisions; synthetic tests require no network. See the reports for methodology and limitations.
+
+See [deployment instructions](docs/deployment.md) for the free Render configuration. Public availability and successful GitHub Actions runs must be verified after pushing and connecting hosting.
 
 ## Attribution
 
